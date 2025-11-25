@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>InstaGrab — Downloader</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <!-- Simple SVG logo -->
+      <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true">
+        <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#f58529"/><stop offset="1" stop-color="#dd2a7b"/></linearGradient></defs>
+        <rect rx="6" width="24" height="24" fill="url(#g)"></rect>
+        <circle cx="12" cy="11" r="3.2" fill="#fff"></circle>
+        <circle cx="17" cy="7" r="1" fill="#fff"></circle>
+      </svg>
+      <h1>InstaGrab</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="toolbar" role="tablist" aria-label="Content type">
+      <button class="tab active" data-type="photo">Photo</button>
+      <button class="tab" data-type="reel">Reel</button>
+      <button class="tab" data-type="story">Stories</button>
+      <button class="tab" data-type="carousel">Carousel</button>
+    </nav>
+
+    <section class="card">
+      <label class="label">Enter your link</label>
+      <input id="linkInput" class="input" placeholder="Enter your photo link..." type="text" />
+      <div class="actions">
+        <button id="downloadBtn" class="btn">Download</button>
+        <span id="status" class="status"></span>
+      </div>
+
+      <div id="previewArea" class="preview" hidden>
+        <h3>Preview</h3>
+        <video id="videoPreview" controls playsinline></video>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/main.js"></script>
+</body>
+</html>
+
+

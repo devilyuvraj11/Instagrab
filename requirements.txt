@@ -1,0 +1,4 @@
+Flask==2.3.3
+Flask-Cors==4.0.1
+yt-dlp==2025.11.12
+httpx==0.25.0
