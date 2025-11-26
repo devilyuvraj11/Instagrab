@@ -1,4 +1,3 @@
-// main.js
 const tabs = document.querySelectorAll('.tab');
 const linkInput = document.getElementById('linkInput');
 const downloadBtn = document.getElementById('downloadBtn');
@@ -7,19 +6,9 @@ const previewArea = document.getElementById('previewArea');
 const videoPreview = document.getElementById('videoPreview');
 
 let selectedType = 'photo';
-let lastBlob = null;       // store resolved blob
-let lastResolvedUrl = '';  // optional header from server
-let raw = linkInput.value.trim();
+let lastBlob = null;
+let lastResolvedUrl = '';
 
-
-try {
-  const u = new URL(raw);
-  urlToSend = u.origin + u.pathname;
-} catch (e) {
-  urlToSend = raw;
-}
-
-// Update placeholder when toolbar clicked
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     tabs.forEach(t=>t.classList.remove('active'));
@@ -30,75 +19,85 @@ tabs.forEach(tab => {
     previewArea.hidden = true;
     lastBlob = null;
     lastResolvedUrl = '';
+    // ensure focused input on mobile
+    linkInput.focus();
   });
 });
 
-// Download button behavior:
-// - First click: POST /download {url} -> receive blob -> show preview and enable download
-// - Second click: if blob present, trigger client-side download
-downloadBtn.addEventListener('click', async () => {
-  const url = linkInput.value.trim();
-  if (!url) {
-    statusEl.textContent = 'Please paste a link first.';
-    return;
+async function resolveForPreview(url) {
+  try {
+    const res = await fetch(`/preview?url=${encodeURIComponent(url)}`);
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({detail:'Preview failed'}));
+      statusEl.textContent = err.detail || 'Preview error';
+      return null;
+    }
+    const json = await res.json();
+    return json;
+  } catch (e) {
+    statusEl.textContent = 'Network error while previewing';
+    return null;
   }
+}
 
-  // If we already have a resolved blob, treat click as "download file"
+downloadBtn.addEventListener('click', async () => {
+  const raw = linkInput.value.trim();
+  if (!raw) { statusEl.textContent = 'Please paste a link first.'; return; }
+
+  // normalize URL to drop query params
+  let urlToSend = raw;
+  try {
+    const u = new URL(raw);
+    urlToSend = u.origin + u.pathname;
+  } catch (e) { urlToSend = raw; }
+
+  // if we already have a blob, treat this as "download"
   if (lastBlob) {
     triggerDownload(lastBlob, 'instagram_video.mp4');
     return;
   }
 
-  // Otherwise, try to resolve through backend
-  statusEl.textContent = 'Resolving...';
+  statusEl.textContent = 'Resolving preview...';
   downloadBtn.disabled = true;
 
-  try {
-    // POST to backend endpoint. If your backend is on another host/port change this URL.
-    const res = await fetch('/download', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
-    });
+  const preview = await resolveForPreview(urlToSend);
+  if (!preview) { downloadBtn.disabled = false; return; }
 
-    if (!res.ok) {
-      // try to parse JSON error
-      try {
-        const err = await res.json();
-        statusEl.textContent = err.detail || `Error: ${res.status}`;
-      } catch (e) {
-        statusEl.textContent = `Server error: ${res.status}`;
-      }
-      return;
-    }
-
-    // read blob
-    const blob = await res.blob();
-    lastBlob = blob;
-
-    // attempt to use an X-Resolved-Video-URL header (backend may provide it) for streaming preview
-    const resolved = res.headers.get('X-Resolved-Video-URL');
-    if (resolved) {
-      lastResolvedUrl = resolved;
-      videoPreview.src = resolved;
-    } else {
-      // show object URL from blob
-      const obj = URL.createObjectURL(blob);
-      videoPreview.src = obj;
-    }
-
+  if (preview.resolved_url) {
+    lastResolvedUrl = preview.resolved_url;
+    // set video src (use direct cdn url) — this works well on most devices
+    videoPreview.src = preview.resolved_url;
     previewArea.hidden = false;
     statusEl.textContent = 'Preview ready. Click Download again to save the video.';
-  } catch (err) {
-    console.error(err);
-    // If backend isn't available, show a helpful note
-    statusEl.textContent = 'Network error — could not reach backend. Make sure server is running at /download';
-  } finally {
+    downloadBtn.disabled = false;
+
+    // Background prefetch the blob (optional)
+    try {
+      const dlRes = await fetch('/download', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({url: urlToSend})
+      });
+      if (!dlRes.ok) {
+        const err = await dlRes.json().catch(()=>({detail:'Download failed'}));
+        statusEl.textContent = err.detail || 'Download error';
+        downloadBtn.disabled = false;
+        return;
+      }
+      const blob = await dlRes.blob();
+      lastBlob = blob;
+      statusEl.textContent = 'Ready to save: click Download again.';
+    } catch (e) {
+      console.warn('background prefetch failed', e);
+    } finally {
+      downloadBtn.disabled = false;
+    }
+  } else {
+    statusEl.textContent = 'Preview not available';
     downloadBtn.disabled = false;
   }
 });
 
-// helper to download blob
 function triggerDownload(blob, filename) {
   const a = document.createElement('a');
   const url = URL.createObjectURL(blob);
@@ -107,6 +106,5 @@ function triggerDownload(blob, filename) {
   document.body.appendChild(a);
   a.click();
   a.remove();
-  // revoke after a short delay
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
