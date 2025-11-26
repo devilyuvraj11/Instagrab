@@ -2,16 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>InstaGrab — Downloader</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>InstaGrab — Instagram Downloader</title>
   <link rel="stylesheet" href="/static/styles.css">
+
+  <!-- Extra styles just for the instructions card -->
+  <style>
+    .instructions-card{
+      background:#0b1120;
+      color:#e5e7eb;
+      border-radius:16px;
+      padding:20px 18px 22px;
+      margin:22px auto 10px;
+      box-shadow:0 14px 40px rgba(15,23,42,0.55);
+      border:1px solid rgba(148,163,184,0.45);
+      max-width:960px;
+    }
+    .instructions-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+    .instructions-header h2{
+      margin:0;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:.02em;
+      color:#e5e7eb;
+    }
+    .instructions-header p{
+      margin:2px 0 0;
+      font-size:13px;
+      color:#9ca3af;
+    }
+    .steps-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:14px;
+      margin-top:8px;
+    }
+    .step-item{
+      background:linear-gradient(135deg,rgba(59,130,246,0.14),rgba(236,72,153,0.10));
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,0.35);
+      padding:12px 12px 10px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .step-media{
+      flex:0 0 56px;
+      width:56px;
+      height:56px;
+      border-radius:12px;
+      overflow:hidden;
+      background:#020617;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .step-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .step-text h3{
+      margin:0 0 4px;
+      font-size:14px;
+      font-weight:700;
+      color:#e5e7eb;
+    }
+    .step-text p{
+      margin:0;
+      font-size:13px;
+      color:#cbd5f5;
+      line-height:1.4;
+    }
+    .step-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:22px;
+      height:22px;
+      border-radius:999px;
+      background:radial-gradient(circle at 0 0,#f97316,#ec4899);
+      color:#fff;
+      font-size:11px;
+      font-weight:800;
+      margin-bottom:7px;
+      box-shadow:0 0 12px rgba(251,113,133,0.6);
+    }
+    .instructions-footer{
+      margin-top:14px;
+      font-size:12px;
+      color:#9ca3af;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .instructions-footer strong{color:#e5e7eb;}
+    .instructions-footer code{
+      background:rgba(15,23,42,0.85);
+      padding:3px 6px;
+      border-radius:5px;
+      font-size:11px;
+      border:1px solid rgba(148,163,184,0.4);
+    }
+
+    /* Responsive tweaks */
+    @media (max-width:840px){
+      .steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media (max-width:560px){
+      .instructions-card{padding:16px 12px 18px;margin-top:18px;}
+      .steps-grid{grid-template-columns:1fr;}
+      .step-item{padding:10px 10px;}
+      .step-media{flex-basis:52px;width:52px;height:52px;}
+    }
+  </style>
 </head>
 <body>
+  <!-- Top logo bar -->
   <header class="topbar">
     <div class="brand">
-      <!-- Simple SVG logo -->
+      <!-- Logo -->
       <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true">
-        <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#f58529"/><stop offset="1" stop-color="#dd2a7b"/></linearGradient></defs>
+        <defs>
+          <linearGradient id="g" x1="0" x2="1">
+            <stop offset="0" stop-color="#f97316"/>
+            <stop offset="1" stop-color="#ec4899"/>
+          </linearGradient>
+        </defs>
         <rect rx="6" width="24" height="24" fill="url(#g)"></rect>
         <circle cx="12" cy="11" r="3.2" fill="#fff"></circle>
         <circle cx="17" cy="7" r="1" fill="#fff"></circle>
@@ -20,31 +146,139 @@
     </div>
   </header>
 
-  <main class="container">
-    <nav class="toolbar" role="tablist" aria-label="Content type">
-      <button class="tab active" data-type="photo">Photo</button>
-      <button class="tab" data-type="reel">Reel</button>
-      <button class="tab" data-type="story">Stories</button>
-      <button class="tab" data-type="carousel">Carousel</button>
-    </nav>
+  <main class="page">
+    <div class="container">
+      <!-- Tabs -->
+      <nav class="toolbar" role="tablist" aria-label="Content type">
+        <button class="tab active" data-type="photo">Photo</button>
+        <button class="tab" data-type="reel">Reel</button>
+        <button class="tab" data-type="story">Stories</button>
+        <button class="tab" data-type="carousel">Carousel</button>
+      </nav>
 
-    <section class="card">
-      <label class="label">Enter your link</label>
-      <input id="linkInput" class="input" placeholder="Enter your photo link..." type="text" />
-      <div class="actions">
-        <button id="downloadBtn" class="btn">Download</button>
-        <span id="status" class="status"></span>
-      </div>
+      <!-- Download card -->
+      <section class="card">
+        <label class="label">Enter link</label>
+        <input id="linkInput"
+               class="input"
+               placeholder="Enter your reel link..."
+               type="text"
+               inputmode="url"
+               pattern="https?://.*" />
+        <div class="actions">
+          <button id="downloadBtn" class="btn">Download</button>
+          <span id="status" class="status" aria-live="polite"></span>
+        </div>
 
-      <div id="previewArea" class="preview" hidden>
-        <h3>Preview</h3>
-        <video id="videoPreview" controls playsinline></video>
-      </div>
-    </section>
+        <div id="previewArea" class="preview" hidden>
+          <h3>Preview</h3>
+          <div class="video-wrap">
+            <video id="videoPreview" controls playsinline></video>
+          </div>
+        </div>
+      </section>
+
+      <!-- NEW: instructions card -->
+      <section class="instructions-card" aria-labelledby="howto-title">
+        <div class="instructions-header">
+          <div>
+            <h2 id="howto-title">How to download video from Instagram?</h2>
+            <p>Follow these simple steps to save any public Instagram Reel, Post, Story or Carousel to your device.</p>
+          </div>
+        </div>
+
+        <div class="steps-grid">
+      
+          <!-- Step 1 -->
+          <article class="step-item">
+            <div class="step-media">
+              <img src="/static/img/copylink.png" alt="Copy link from Instagram share menu" />
+            </div>
+            <div class="step-text">
+              <div class="step-badge">1</div>
+              <h3>Copy the link</h3>
+              <p>Tap the <strong>Share</strong> icon (⋯) and choose <strong>Copy link</strong> to copy the post URL to your clipboard.</p>
+            </div>
+          </article>
+
+          <!-- Step 2 -->
+          <article class="step-item">
+            <div class="step-media">
+              <img src="/static/img/pastelink.png" alt="Paste link into InstaGrab input field" />
+            </div>
+            <div class="step-text">
+              <div class="step-badge">2</div>
+              <h3>Paste the link here</h3>
+              <p>Return to InstaGrab, paste the copied URL into the link box at the top of the page.</p>
+            </div>
+          </article>
+
+          <!-- Step 3 -->
+          <article class="step-item">
+            <div class="step-media">
+              <img src="/static/img/select.png" alt="Choose photo, reel, story, or carousel tab" />
+            </div>
+            <div class="step-text">
+              <div class="step-badge">3</div>
+              <h3>Select content type</h3>
+              <p>Tap the matching tab: <strong>Photo</strong>, <strong>Reel</strong>, <strong>Stories</strong>, or <strong>Carousel</strong> so we can optimize the download.</p>
+            </div>
+          </article>
+
+          <!-- Step 4 -->
+          <article class="step-item">
+            <div class="step-media">
+              <img src="/static/img/download.png" alt="Click download button on InstaGrab" />
+            </div>
+            <div class="step-text">
+              <div class="step-badge">4</div>
+              <h3>Click “Download”</h3>
+              <p>Press the <strong>Download</strong> button. We will fetch the media using a secure server connection.</p>
+            </div>
+          </article>
+
+          <!-- Step 5 -->
+          <article class="step-item">
+            <div class="step-media">
+              <img src="/static/img/preview.png" alt="Preview the Instagram video before downloading" />
+            </div>
+            <div class="step-text">
+              <div class="step-badge">5</div>
+              <h3>Preview your video</h3>
+              <p>Once the preview appears, quickly check that it is the correct Instagram content.</p>
+            </div>
+          </article>
+
+          <!-- Step 6 -->
+          <article class="step-item">
+            <div class="step-media">
+              <img src="/static/img/download.png" alt="Save video file to phone or computer" />
+            </div>
+            <div class="step-text">
+              <div class="step-badge">6</div>
+              <h3>Save to your device</h3>
+              <p>Click <strong>Download</strong> again to save the video file directly to your phone or computer.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="instructions-footer">
+          <div>
+            <strong>Important:</strong> Private or login-only posts can only be downloaded if you have access to view them.
+          </div>
+          <div>
+            Example links:
+            <code>https://www.instagram.com/reel/XXXXXXXXXXX/</code>
+          </div>
+        </div>
+      </section>
+
+      <footer class="hint">
+        Tip: To download private posts add a <code>cookies.txt</code> (Netscape format) to project root. Only use this for content you are allowed to download.
+      </footer>
+    </div>
   </main>
 
   <script src="/static/main.js"></script>
 </body>
 </html>
-
-
