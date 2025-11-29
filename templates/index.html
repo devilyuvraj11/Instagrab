@@ -2,174 +2,61 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>InstaGrab — Instagram Downloader</title>
-  <link rel="stylesheet" href="/static/styles.css">
 
-  <!-- Extra styles just for the instructions card -->
-  <style>
-    .instructions-card{
-      background:#0b1120;
-      color:#e5e7eb;
-      border-radius:16px;
-      padding:20px 18px 22px;
-      margin:22px auto 10px;
-      box-shadow:0 14px 40px rgba(15,23,42,0.55);
-      border:1px solid rgba(148,163,184,0.45);
-      max-width:960px;
-    }
-    .instructions-header{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:14px;
-      flex-wrap:wrap;
-    }
-    .instructions-header h2{
-      margin:0;
-      font-size:18px;
-      font-weight:800;
-      letter-spacing:.02em;
-      color:#e5e7eb;
-    }
-    .instructions-header p{
-      margin:2px 0 0;
-      font-size:13px;
-      color:#9ca3af;
-    }
-    .steps-grid{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:14px;
-      margin-top:8px;
-    }
-    .step-item{
-      background:linear-gradient(135deg,rgba(59,130,246,0.14),rgba(236,72,153,0.10));
-      border-radius:14px;
-      border:1px solid rgba(148,163,184,0.35);
-      padding:12px 12px 10px;
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .step-media{
-      flex:0 0 56px;
-      width:56px;
-      height:56px;
-      border-radius:12px;
-      overflow:hidden;
-      background:#020617;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .step-media img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    .step-text h3{
-      margin:0 0 4px;
-      font-size:14px;
-      font-weight:700;
-      color:#e5e7eb;
-    }
-    .step-text p{
-      margin:0;
-      font-size:13px;
-      color:#cbd5f5;
-      line-height:1.4;
-    }
-    .step-badge{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:22px;
-      height:22px;
-      border-radius:999px;
-      background:radial-gradient(circle at 0 0,#f97316,#ec4899);
-      color:#fff;
-      font-size:11px;
-      font-weight:800;
-      margin-bottom:7px;
-      box-shadow:0 0 12px rgba(251,113,133,0.6);
-    }
-    .instructions-footer{
-      margin-top:14px;
-      font-size:12px;
-      color:#9ca3af;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:space-between;
-      align-items:center;
-    }
-    .instructions-footer strong{color:#e5e7eb;}
-    .instructions-footer code{
-      background:rgba(15,23,42,0.85);
-      padding:3px 6px;
-      border-radius:5px;
-      font-size:11px;
-      border:1px solid rgba(148,163,184,0.4);
-    }
+  <meta name="description" content="Download Instagram Reels, Stories, Photos and Carousel posts in HD for free." />
+  <meta name="theme-color" content="#ec4899" />
 
-    /* Responsive tweaks */
-    @media (max-width:840px){
-      .steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-    }
-    @media (max-width:560px){
-      .instructions-card{padding:16px 12px 18px;margin-top:18px;}
-      .steps-grid{grid-template-columns:1fr;}
-      .step-item{padding:10px 10px;}
-      .step-media{flex-basis:52px;width:52px;height:52px;}
-    }
-  </style>
+  <!-- favicon optional -->
+  <link rel="icon" href="favicon.ico" />
+
+  <!-- styles -->
+  <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
-  <!-- Top logo bar -->
+
+  <!-- HEADER -->
   <header class="topbar">
     <div class="brand">
-      <!-- Logo -->
-      <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true">
-        <defs>
-          <linearGradient id="g" x1="0" x2="1">
-            <stop offset="0" stop-color="#f97316"/>
-            <stop offset="1" stop-color="#ec4899"/>
-          </linearGradient>
-        </defs>
-        <rect rx="6" width="24" height="24" fill="url(#g)"></rect>
-        <circle cx="12" cy="11" r="3.2" fill="#fff"></circle>
-        <circle cx="17" cy="7" r="1" fill="#fff"></circle>
-      </svg>
+      <!-- new logo image (logo.png in same folder) -->
+      <img src="/static/img/logo.png" class="logo" alt="InstaGrab Logo">
       <h1>InstaGrab</h1>
     </div>
   </header>
 
+  <!-- PAGE -->
   <main class="page">
     <div class="container">
-      <!-- Tabs -->
-      <nav class="toolbar" role="tablist" aria-label="Content type">
-        <button class="tab active" data-type="photo">Photo</button>
-        <button class="tab" data-type="reel">Reel</button>
-        <button class="tab" data-type="story">Stories</button>
-        <button class="tab" data-type="carousel">Carousel</button>
-      </nav>
 
-      <!-- Download card -->
+      <!-- NAV TABS -->
+      <div class="toolbar-wrap">
+        <nav class="toolbar" role="tablist" aria-label="Content type">
+          <button class="tab active" data-type="photo">Photo</button>
+          <button class="tab" data-type="reel">Reel</button>
+          <button class="tab" data-type="story">Stories</button>
+          <button class="tab" data-type="carousel">Carousel</button>
+        </nav>
+      </div>
+
+      <!-- INPUT / DOWNLOAD CARD -->
       <section class="card">
-        <label class="label">Enter link</label>
-        <input id="linkInput"
-               class="input"
-               placeholder="Enter your reel link..."
-               type="text"
-               inputmode="url"
-               pattern="https?://.*" />
+        <label class="label" for="linkInput">Enter link</label>
+
+        <input
+          class="input"
+          id="linkInput"
+          type="url"
+          placeholder="Paste your Instagram link here..."
+        />
+
         <div class="actions">
-          <button id="downloadBtn" class="btn">Download</button>
-          <span id="status" class="status" aria-live="polite"></span>
+          <button class="btn" id="downloadBtn">Download</button>
+          <!-- animated loader -->
+          <span id="status" class="loader" hidden aria-hidden="true"></span>
         </div>
 
+        <!-- optional preview area (hidden by default) -->
         <div id="previewArea" class="preview" hidden>
           <h3>Preview</h3>
           <div class="video-wrap">
@@ -178,103 +65,91 @@
         </div>
       </section>
 
-      <!-- NEW: instructions card -->
-      <section class="instructions-card" aria-labelledby="howto-title">
+      <!-- INSTRUCTIONS -->
+      <section class="instructions-card">
         <div class="instructions-header">
-          <div>
-            <h2 id="howto-title">How to download video from Instagram?</h2>
-            <p>Follow these simple steps to save any public Instagram Reel, Post, Story or Carousel to your device.</p>
-          </div>
+          <h2>How to download video from Instagram?</h2>
+          <p>Follow these steps to save any public Instagram reel, story, photo or carousel.</p>
         </div>
 
         <div class="steps-grid">
-      
-          <!-- Step 1 -->
+
           <article class="step-item">
             <div class="step-media">
-              <img src="/static/img/copylink.png" alt="Copy link from Instagram share menu" />
+              <img src="/static/img/copylink.png" alt="Copy the Instagram link" />
             </div>
             <div class="step-text">
               <div class="step-badge">1</div>
               <h3>Copy the link</h3>
-              <p>Tap the <strong>Share</strong> icon (⋯) and choose <strong>Copy link</strong> to copy the post URL to your clipboard.</p>
+              <p>On Instagram, tap the <strong>Share</strong> icon and choose <strong>Copy link</strong>.</p>
             </div>
           </article>
 
-          <!-- Step 2 -->
           <article class="step-item">
             <div class="step-media">
-              <img src="/static/img/pastelink.png" alt="Paste link into InstaGrab input field" />
+              <img src="/static/img/pastelink.png" alt="Paste the link into InstaGrab" />
             </div>
             <div class="step-text">
               <div class="step-badge">2</div>
               <h3>Paste the link here</h3>
-              <p>Return to InstaGrab, paste the copied URL into the link box at the top of the page.</p>
+              <p>Return to InstaGrab and paste the copied link into the box above.</p>
             </div>
           </article>
 
-          <!-- Step 3 -->
           <article class="step-item">
             <div class="step-media">
-              <img src="/static/img/select.png" alt="Choose photo, reel, story, or carousel tab" />
+              <img src="/static/img/select.png" alt="Select content type" />
             </div>
             <div class="step-text">
               <div class="step-badge">3</div>
               <h3>Select content type</h3>
-              <p>Tap the matching tab: <strong>Photo</strong>, <strong>Reel</strong>, <strong>Stories</strong>, or <strong>Carousel</strong> so we can optimize the download.</p>
+              <p>Choose <strong>Photo</strong>, <strong>Reel</strong>, <strong>Stories</strong> or <strong>Carousel</strong> to match your link.</p>
             </div>
           </article>
 
-          <!-- Step 4 -->
           <article class="step-item">
             <div class="step-media">
-              <img src="/static/img/download.png" alt="Click download button on InstaGrab" />
+              <img src="/static/img/download.png" alt="Click download" />
             </div>
             <div class="step-text">
               <div class="step-badge">4</div>
-              <h3>Click “Download”</h3>
-              <p>Press the <strong>Download</strong> button. We will fetch the media using a secure server connection.</p>
+              <h3>Click Download</h3>
+              <p>Hit the <strong>Download</strong> button. We’ll fetch the media securely from our server.</p>
             </div>
           </article>
 
-          <!-- Step 5 -->
           <article class="step-item">
             <div class="step-media">
-              <img src="/static/img/preview.png" alt="Preview the Instagram video before downloading" />
+              <img src="/static/img/preview.png" alt="Preview the media" />
             </div>
             <div class="step-text">
               <div class="step-badge">5</div>
-              <h3>Preview your video</h3>
-              <p>Once the preview appears, quickly check that it is the correct Instagram content.</p>
+              <h3>Preview your content</h3>
+              <p>Check the preview to confirm it’s the correct Instagram post or reel.</p>
             </div>
           </article>
 
-          <!-- Step 6 -->
           <article class="step-item">
             <div class="step-media">
-              <img src="/static/img/download.png" alt="Save video file to phone or computer" />
+              <img src="/static/img/download.png" alt="Save to your device" />
             </div>
             <div class="step-text">
               <div class="step-badge">6</div>
               <h3>Save to your device</h3>
-              <p>Click <strong>Download</strong> again to save the video file directly to your phone or computer.</p>
+              <p>Save the file directly to your phone or computer for offline viewing.</p>
             </div>
           </article>
+
         </div>
 
         <div class="instructions-footer">
-          <div>
-            <strong>Important:</strong> Private or login-only posts can only be downloaded if you have access to view them.
-          </div>
-          <div>
-            Example links:
-            <code>https://www.instagram.com/reel/XXXXXXXXXXX/</code>
-          </div>
+          <span><strong>Important:</strong> You can only download content you’re allowed to access.</span>
+          <span>Example: <code>https://www.instagram.com/reel/XXXXXXXXXXX/</code></span>
         </div>
       </section>
 
       <footer class="hint">
-        Tip: To download private posts add a <code>cookies.txt</code> (Netscape format) to project root. Only use this for content you are allowed to download.
+        Tip: For private posts, you must be logged in on the backend and have permission to view the content.
       </footer>
     </div>
   </main>
