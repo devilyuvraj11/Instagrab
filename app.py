@@ -1,10 +1,19 @@
-from flask import Flask, render_template, request, jsonify, send_file, Response
+from flask import Flask, render_template, request, jsonify, send_file, send_from_directory, Response
 from flask_cors import CORS
 import os, tempfile, shutil, uuid, traceback
 from yt_dlp import YoutubeDL
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app, resources={r"/*": {"origins": "*"}})
+
+@app.route("/sitemap.xml")
+def sitemap():
+    return send_from_directory(".", "sitemap.xml", mimetype="application/xml")
+
+
+@app.route("/robots.txt")
+def robots():
+    return send_from_directory(".", "robots.txt", mimetype="text/plain")
 
 # If you want to support downloading private posts, place a cookies.txt
 # (Netscape format) in the project root and yt-dlp will use it.
