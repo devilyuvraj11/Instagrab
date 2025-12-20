@@ -5,6 +5,13 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
+  <url>
+    <loc>https://www.insta-grab.online/about</loc>
+  </url>
+  <url>
+    <loc>https://www.insta-grab.online/contact</loc>
+  </url>
+  <url>
+    <loc>https://www.insta-grab.online/privacy-policy</loc>
+  </url>
 </urlset>
-
