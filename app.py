@@ -15,6 +15,23 @@ def sitemap():
 def robots():
     return send_from_directory(".", "robots.txt", mimetype="text/plain")
 
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+@app.route("/privacy-policy")
+def privacy():
+    return render_template("privacy-policy.html")
+
+
 # If you want to support downloading private posts, place a cookies.txt
 # (Netscape format) in the project root and yt-dlp will use it.
 COOKIES_FILE = os.path.join(os.getcwd(), 'cookies.txt')
