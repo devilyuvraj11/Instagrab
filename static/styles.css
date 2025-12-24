@@ -84,6 +84,8 @@ body {
   border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
+
+
 .tab {
   padding: 8px 18px;
   border-radius: 10px;
@@ -190,6 +192,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;   /* center the preview box */
+}
+
+.preview[hidden] {
+  display: none !important;
 }
 
 .preview h3 {
@@ -314,11 +320,61 @@ body {
   border: 1px solid rgba(148, 163, 184, 0.5);
 }
 
+/* --------- FOOTER --------- */
 .hint {
-  margin-top: 18px;
-  font-size: 12px;
-  opacity: 0.85;
+  margin-top: 40px;
+  padding: 16px 12px;
+  text-align: center;
+  font-size: 13px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(236, 72, 153, 0.35);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.9);
 }
+
+/* links */
+.hint a {
+  color: #f9a8d4;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 0 8px;
+  position: relative;
+  transition: color 0.25s ease;
+}
+
+/* underline animation */
+.hint a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #f97316, #ec4899);
+  transition: width 0.25s ease;
+}
+
+.hint a:hover {
+  color: #ffffff;
+}
+
+.hint a:hover::after {
+  width: 100%;
+}
+
+/* remove | separator on mobile */
+@media (max-width: 520px) {
+  .hint {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hint a {
+    margin: 0;
+  }
+}
+
 
 /* --------- RESPONSIVE --------- */
 @media (max-width: 640px) {
