@@ -12,6 +12,11 @@
 *::after {
   box-sizing: border-box;
 }
+.ads {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
 
 body {
   margin: 0;
