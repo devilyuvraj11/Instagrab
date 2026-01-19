@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.insta-grab.online/sitemap.xml
+Sitemap: https://log.insta-grab.online/sitemap.xml
+
 
 
