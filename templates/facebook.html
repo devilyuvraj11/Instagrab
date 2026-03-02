@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Facebook Reel Downloader – Face-Hook</title>
+
+<link rel="icon" href="/static/img/fblogo.png">
+<link rel="stylesheet" href="/static/styles.css">
+
+<style>
+/* Facebook theme */
+.fb-hero {
+  text-align:center;
+  padding:28px 12px;
+  background:linear-gradient(135deg,#1877f2,#0f5bd8);
+  color:#fff;
+  border-radius:0 0 20px 20px;
+}
+
+.fb-hero h2{margin:0;font-size:22px}
+.fb-hero p{margin:6px 0 0;opacity:.9}
+
+.preview video{
+  width:100%;
+  border-radius:10px;
+  margin-top:12px;
+}
+
+.error{
+  color:#ff6b6b;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body class="facebook-theme">
+
+<!-- HEADER -->
+<header class="topbar">
+  <div class="brand">
+    <img src="/static/img/fblogo.png" class="logo">
+    <h1>face-hook</h1>
+  </div>
+
+  <div class="platform-bar">
+    <a href="/" class="platform-item">
+      <img src="/static/img/favicon.png">
+      <span>INSTAGRAM</span>
+    </a>
+
+    <a href="/facebook" class="platform-item active">
+      <img src="/static/img/fblogo.png">
+      <span>FACEBOOK</span>
+    </a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="fb-hero">
+  <h2>Facebook Reel Downloader</h2>
+  <p>Download Facebook videos & reels in HD instantly</p>
+</section>
+
+
+ 
+
+<!-- PAGE -->
+<main class="page">
+  
+
+<div class="container">
+
+
+<section class="card">
+<label class="label">Enter Facebook Link</label>
+
+<input id="linkInput" class="input" type="url"
+placeholder="Paste Facebook video or reel link here...">
+
+<div class="actions">
+<button class="btn" id="downloadBtn">Download</button>
+<span id="status" class="loader" hidden></span>
+</div>
+
+<div id="errorBox" class="error"></div>
+
+<!-- Preview -->
+
+<div id="previewArea" class="preview" hidden>
+          <h3>Preview</h3>
+          <div class="video-wrap">
+            <video id="videoPreview" controls playsinline></video>
+          </div>
+        </div>
+
+        <footer class="hint">
+         <p>
+    <a href="/privacy-policy">Privacy Policy</a> |
+    <a href="/about">About</a> |
+    <a href="/contact">Contact</a>
+  </p>
+  <p>
+        Tip: For private posts, you must be logged in on the backend and have permission to view the content.</p>
+      </footer>
+
+</section>
+
+</div>
+</main>
+
+<script src="/static/main.js"></script>
+
+</body>
+</html>
