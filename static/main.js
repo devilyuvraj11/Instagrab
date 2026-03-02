@@ -1,102 +1,166 @@
 const tabs = document.querySelectorAll('.tab');
+const loader = document.getElementById("status");
+const errorBox = document.getElementById("errorBox");
 const linkInput = document.getElementById('linkInput');
 const downloadBtn = document.getElementById('downloadBtn');
-const statusEl = document.getElementById('status');
 const previewArea = document.getElementById('previewArea');
 const videoPreview = document.getElementById('videoPreview');
 
-let selectedType = 'photo';
-let lastBlob = null;
-let lastResolvedUrl = '';
+let isPreviewShown = false;
+let downloadedBlob = null;
 
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    selectedType = tab.dataset.type;
-    linkInput.placeholder = `Enter your ${selectedType} link...`;
-    statusEl.textContent = '';
-    previewArea.hidden = true;
-    lastBlob = null;
-    lastResolvedUrl = '';
-    // ensure focused input on mobile
-    linkInput.focus();
-  });
-});
+/* ---------- AUTO FILL URL FROM QUERY ---------- */
+const params = new URLSearchParams(window.location.search);
+const sharedUrl = params.get("url");
 
-async function resolveForPreview(url) {
-  try {
-    const res = await fetch(`/preview?url=${encodeURIComponent(url)}`);
-    if (!res.ok) {
-      const err = await res.json().catch(()=>({detail:'Preview failed'}));
-      statusEl.textContent = err.detail || 'Preview error';
-      return null;
-    }
-    const json = await res.json();
-    return json;
-  } catch (e) {
-    statusEl.textContent = 'Network error while previewing';
-    return null;
-  }
+if (sharedUrl && linkInput) {
+  linkInput.value = sharedUrl;
 }
 
+/* ---------------- PLATFORM DETECT ---------------- */
+
+function isFacebookPage(){
+  return window.location.pathname.includes("facebook");
+}
+
+function isInstagramPage(){
+  return !isFacebookPage();
+}
+
+function isInstagramLink(url){
+  return /instagram\.com/i.test(url);
+}
+
+function isFacebookLink(url){
+  return /(facebook\.com|fb\.watch)/i.test(url);
+}
+
+function getPreviewSource(){
+  return isFacebookPage() ? "facebook" : "instagram";
+}
+
+function getDownloadEndpoint(){
+  return isFacebookPage() ? "/facebook/download" : "/download";
+}
+
+/* ---------------- SAFE RESET ---------------- */
+
+if (previewArea) previewArea.hidden = true;
+if (videoPreview) videoPreview.src = '';
+if (downloadBtn) downloadBtn.textContent = 'Download';
+
+/* ---------------- TAB SWITCH (SAFE) ---------------- */
+
+if (tabs.length > 0) {
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      if (previewArea) previewArea.hidden = true;
+      if (videoPreview) videoPreview.src = '';
+      if (loader) loader.hidden = true;
+      if (errorBox) errorBox.textContent = '';
+
+      downloadedBlob = null;
+      isPreviewShown = false;
+      if (downloadBtn) downloadBtn.textContent = 'Download';
+    });
+  });
+}
+
+/* ---------------- DOWNLOAD CLICK ---------------- */
+
+if (downloadBtn) {
 downloadBtn.addEventListener('click', async () => {
-  const raw = linkInput.value.trim();
-  if (!raw) { statusEl.textContent = 'Please paste a link first.'; return; }
 
-  // normalize URL to drop query params
-  let urlToSend = raw;
-  try {
-    const u = new URL(raw);
-    urlToSend = u.origin + u.pathname;
-  } catch (e) { urlToSend = raw; }
+  const inputUrl = linkInput.value.trim();
+  if (errorBox) errorBox.textContent = "";
 
-  // if we already have a blob, treat this as "download"
-  if (lastBlob) {
-    triggerDownload(lastBlob, 'instagram_video.mp4');
+  if (!inputUrl) {
+    errorBox.textContent = "Enter valid link";
     return;
   }
 
-  statusEl.textContent = 'Resolving preview...';
+  /* AUTO REDIRECT */
+  if (isInstagramPage() && isFacebookLink(inputUrl)) {
+    window.location.href = "/facebook?url=" + encodeURIComponent(inputUrl);
+    return;
+  }
+
+  if (isFacebookPage() && isInstagramLink(inputUrl)) {
+    window.location.href = "/instagram?url=" + encodeURIComponent(inputUrl);
+    return;
+  }
+
+  /* Normalize URL */
+  let cleanUrl = inputUrl;
+  try {
+    const u = new URL(inputUrl);
+    cleanUrl = u.origin + u.pathname;
+  } catch {}
+
+  /* SECOND CLICK → DOWNLOAD */
+  if (isPreviewShown && downloadedBlob) {
+    triggerDownload(downloadedBlob, 'video.mp4');
+    return;
+  }
+
+  loader.hidden = false;
   downloadBtn.disabled = true;
 
-  const preview = await resolveForPreview(urlToSend);
-  if (!preview) { downloadBtn.disabled = false; return; }
+  try {
+    /* ---------- PREVIEW ---------- */
+    const previewRes = await fetch(
+      `/preview?url=${encodeURIComponent(cleanUrl)}&source=${getPreviewSource()}`
+    );
 
-  if (preview.resolved_url) {
-    lastResolvedUrl = preview.resolved_url;
-    // set video src (use direct cdn url) — this works well on most devices
-    videoPreview.src = preview.resolved_url;
-    previewArea.hidden = false;
-    statusEl.textContent = 'Preview ready. Click Download again to save the video.';
-    downloadBtn.disabled = false;
+    const contentType = previewRes.headers.get("content-type");
+    let previewData = null;
 
-    // Background prefetch the blob (optional)
-    try {
-      const dlRes = await fetch('/download', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({url: urlToSend})
-      });
-      if (!dlRes.ok) {
-        const err = await dlRes.json().catch(()=>({detail:'Download failed'}));
-        statusEl.textContent = err.detail || 'Download error';
-        downloadBtn.disabled = false;
-        return;
-      }
-      const blob = await dlRes.blob();
-      lastBlob = blob;
-      statusEl.textContent = 'Ready to save: click Download again.';
-    } catch (e) {
-      console.warn('background prefetch failed', e);
-    } finally {
-      downloadBtn.disabled = false;
+    if (contentType && contentType.includes("application/json")) {
+      previewData = await previewRes.json();
     }
-  } else {
-    statusEl.textContent = 'Preview not available';
+
+    if (!previewRes.ok || !previewData || !previewData.resolved_url) {
+      throw new Error(previewData?.detail || "Enter valid link");
+    }
+
+    videoPreview.src = previewData.resolved_url;
+    previewArea.hidden = false;
+    isPreviewShown = true;
+    downloadBtn.textContent = "Download Video";
+
+    /* ---------- DOWNLOAD ---------- */
+    const dlRes = await fetch(getDownloadEndpoint(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: cleanUrl })
+    });
+
+    if (!dlRes.ok) {
+      const ct = dlRes.headers.get("content-type");
+      let errMsg = "Download failed";
+
+      if (ct && ct.includes("application/json")) {
+        const err = await dlRes.json();
+        errMsg = err.detail || errMsg;
+      }
+      throw new Error(errMsg);
+    }
+
+    downloadedBlob = await dlRes.blob();
+
+  } catch (err) {
+    errorBox.textContent = err.message || "Something went wrong";
+  } finally {
+    loader.hidden = true;
     downloadBtn.disabled = false;
   }
 });
+}
+
+/* ---------------- DOWNLOAD FILE ---------------- */
 
 function triggerDownload(blob, filename) {
   const a = document.createElement('a');
@@ -106,5 +170,5 @@ function triggerDownload(blob, filename) {
   document.body.appendChild(a);
   a.click();
   a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),2000);
+  URL.revokeObjectURL(url);
 }
