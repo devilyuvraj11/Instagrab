@@ -32,8 +32,22 @@
 
   <!-- styles -->
   <link rel="stylesheet" href="/static/styles.css" />
+
+  <style>
+.fb-hero {
+  text-align:center;
+  padding:28px 12px;
+  background:linear-gradient(135deg,#f2187e,#d80f8b);
+  color:#fff;
+  border-radius:0 0 20px 20px;
+}
+
+.fb-hero h2{margin:0;font-size:22px}
+.fb-hero p{margin:6px 0 0;opacity:.9}
+
+</style>
 </head>
-<body>
+<body class="instagram-theme">
 
   <!-- HEADER -->
   <header class="topbar">
@@ -42,17 +56,39 @@
       <img src="/static/img/logo.png" class="logo" alt="Insta-Grab Logo">
       <h1>insta-grab</h1>
     </div>
+
+    <div class="platform-bar">
+  <a href="/" class="platform-item active">
+    <img src="/static/img/logo.png" alt="Instagram">
+    <span>INSTAGRAM</span>
+  </a>
+
+  <a href="facebook" class="platform-item">
+    <img src="/static/img/fblogo.png" alt="Facebook">
+    <span>FACEBOOK</span>
+  </a>
+</div>
+
   </header>
+
+
+  <section class="fb-hero">
+  <h2>Instagram Reel Downloader</h2>
+  <p>Download Instagram videos, reels & posts in HD instantly</p>
+</section>
 
   <!-- PAGE -->
   <main class="page">
+    <section id="instagramPage">
     <div class="container">
+
+      
 
       <!-- NAV TABS -->
       <div class="toolbar-wrap">
         <nav class="toolbar" role="tablist" aria-label="Content type">
-          <button class="tab active" data-type="photo">Photo</button>
-          <button class="tab" data-type="reel">Reel</button>
+          <button class="tab active" data-type="reel">Reel</button>
+          <button class="tab" data-type="photo">Photo</button>
           <button class="tab" data-type="story">Stories</button>
           <button class="tab" data-type="carousel">Carousel</button>
         </nav>
@@ -74,6 +110,9 @@
           <!-- animated loader -->
           <span id="status" class="loader" hidden aria-hidden="true"></span>
         </div>
+
+        <div id="errorBox" class="error"></div>
+
 
         <!-- optional preview area (hidden by default) -->
         <div id="previewArea" class="preview" hidden>
@@ -223,11 +262,16 @@
         Tip: For private posts, you must be logged in on the backend and have permission to view the content.</p>
       </footer>
     </div>
+
+    </section>
+
+    
+
   </main>
   <script async="async" data-cfasync="false" src="https://pl28343561.effectivegatecpm.com/486cafef81b9b2f059361c6ae4492832/invoke.js"></script>
 <div id="container-486cafef81b9b2f059361c6ae4492832"></div>
 
   <script src="/static/main.js"></script>
-  <script src="https://pl28213455.effectivegatecpm.com/15/a6/d6/15a6d652efff614d0331cd0664d12d12.js"></script>
+  <!-- <script src="https://pl28343165.effectivegatecpm.com/2d/4f/5c/2d4f5cc90dad3a0f3e292e8e2f972735.js"></script> -->
 </body>
 </html>
